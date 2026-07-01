@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import TagPicker from './TagPicker'
 import SymptomTracker from './SymptomTracker'
+import ExerciseSelector from './ExerciseSelector'
 import {
   todayISO,
   fetchSavedItems,
@@ -11,7 +12,7 @@ import {
 
 const EMPTY_ENTRY = {
   foods: [],
-  exercise: [],
+  exercise_level: 'none',
   sleep_hours: null,
   medications: [],
   symptoms: [],
@@ -34,21 +35,18 @@ export default function DailyEntry() {
   const [date, setDate] = useState(todayISO())
   const [entry, setEntry] = useState(EMPTY_ENTRY)
   const [savedFoods, setSavedFoods] = useState([])
-  const [savedExercise, setSavedExercise] = useState([])
   const [savedMeds, setSavedMeds] = useState([])
   const [savedSymptoms, setSavedSymptoms] = useState([])
   const [loading, setLoading] = useState(true)
   const [saveState, setSaveState] = useState('idle') // idle | saving | saved | error
 
   const loadSavedItems = useCallback(async () => {
-    const [foods, exercise, meds, symptoms] = await Promise.all([
+    const [foods, meds, symptoms] = await Promise.all([
       fetchSavedItems('food'),
-      fetchSavedItems('exercise'),
       fetchSavedItems('medication'),
       fetchSavedItems('symptom'),
     ])
     setSavedFoods(foods)
-    setSavedExercise(exercise)
     setSavedMeds(meds)
     setSavedSymptoms(symptoms)
   }, [])
@@ -60,7 +58,7 @@ export default function DailyEntry() {
       if (existing) {
         setEntry({
           foods: existing.foods || [],
-          exercise: existing.exercise || [],
+          exercise_level: existing.exercise_level || 'none',
           sleep_hours: existing.sleep_hours,
           medications: existing.medications || [],
           symptoms: existing.symptoms || [],
@@ -120,14 +118,13 @@ export default function DailyEntry() {
       // Record use for every selected chip so frequency ranking stays accurate
       await Promise.all([
         ...entry.foods.map((f) => recordItemUse('food', f)),
-        ...entry.exercise.map((x) => recordItemUse('exercise', x)),
         ...entry.medications.map((m) => recordItemUse('medication', m)),
       ])
 
       await upsertEntry({
         entry_date: date,
         foods: entry.foods,
-        exercise: entry.exercise,
+        exercise_level: entry.exercise_level,
         sleep_hours: entry.sleep_hours === '' ? null : entry.sleep_hours,
         medications: entry.medications,
         symptoms: entry.symptoms,
@@ -191,12 +188,11 @@ export default function DailyEntry() {
 
           <section className="entry-card">
             <h2 className="entry-card__title">Exercise</h2>
-            <TagPicker
-              savedItems={savedExercise}
-              selected={entry.exercise}
-              onToggle={(label) => toggleItem('exercise', label)}
-              onAddNew={(label) => addNewItem('exercise', 'exercise', label)}
-              placeholder="Add an activity"
+            <ExerciseSelector
+              value={entry.exercise_level}
+              onChange={(level) =>
+                setEntry((prev) => ({ ...prev, exercise_level: level }))
+              }
             />
           </section>
 
