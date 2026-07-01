@@ -12,6 +12,8 @@ import { fetchAllEntries } from '../lib/data'
 import TrendSummary from './TrendSummary'
 import SleepChart from './SleepChart'
 import FoodHistory from './FoodHistory'
+import MedicationHistory from './MedicationHistory'
+import CollapsibleCard from './CollapsibleCard'
 import { useTheme } from '../lib/theme'
 
 const SEVERITY_VALUE = { none: 0, mild: 1, severe: 2 }
@@ -276,8 +278,9 @@ export default function History() {
 
       <FoodHistory entries={entries} rangeDays={rangeDays} />
 
-      <section className="entry-card">
-        <h2 className="entry-card__title">Recent days</h2>
+      <MedicationHistory entries={entries} rangeDays={rangeDays} />
+
+      <CollapsibleCard title="Recent days" count={recentEntries.length}>
         <div className="history-list">
           {recentEntries.map((e) => (
             <div key={e.entry_date} className="history-row">
@@ -320,7 +323,7 @@ export default function History() {
             </div>
           ))}
         </div>
-      </section>
+      </CollapsibleCard>
     </div>
   )
 }
