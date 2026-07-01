@@ -11,10 +11,17 @@ import {
 import { fetchAllEntries } from '../lib/data'
 import TrendSummary from './TrendSummary'
 import SleepChart from './SleepChart'
+import FoodHistory from './FoodHistory'
 import { useTheme } from '../lib/theme'
 
 const SEVERITY_VALUE = { none: 0, mild: 1, severe: 2 }
 const SEVERITY_LABEL = { 0: 'None', 1: 'Mild', 2: 'Severe' }
+
+const EXERCISE_NAME = 'Exercise'
+const EXERCISE_VALUE = { none: 0, light: 1, intense: 2 }
+const EXERCISE_LABEL = { 0: 'None', 1: 'Light', 2: 'Intense' }
+const EXERCISE_COLOR_LIGHT = '#6B5CA5'
+const EXERCISE_COLOR_DARK = '#9C8CF0'
 
 // Two palettes, tuned for contrast against their respective backgrounds.
 // Same order/meaning across both so a given symptom's "slot" color feels
@@ -47,13 +54,16 @@ function CustomTooltip({ active, payload, label }) {
   return (
     <div className="chart-tooltip">
       <div className="chart-tooltip__date">{shortDate(label)}</div>
-      {payload.map((p) => (
-        <div key={p.dataKey} className="chart-tooltip__row">
-          <span className="chart-tooltip__dot" style={{ background: p.color }} />
-          <span className="chart-tooltip__name">{p.dataKey}</span>
-          <span className="chart-tooltip__value">{SEVERITY_LABEL[p.value]}</span>
-        </div>
-      ))}
+      {payload.map((p) => {
+        const labelSet = p.dataKey === EXERCISE_NAME ? EXERCISE_LABEL : SEVERITY_LABEL
+        return (
+          <div key={p.dataKey} className="chart-tooltip__row">
+            <span className="chart-tooltip__dot" style={{ background: p.color }} />
+            <span className="chart-tooltip__name">{p.dataKey}</span>
+            <span className="chart-tooltip__value">{labelSet[p.value]}</span>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -86,21 +96,35 @@ export default function History() {
     entries.forEach((e) => {
       ;(e.symptoms || []).forEach((s) => allNameSet.add(s.name))
     })
+    const hasExerciseData = entries.some((e) => e.exercise_level != null)
+    if (hasExerciseData) allNameSet.add(EXERCISE_NAME)
+
     const allNames = Array.from(allNameSet)
     const colors = {}
     allNames.forEach((name, i) => {
       colors[name] = LINE_COLORS[i % LINE_COLORS.length]
     })
+    // Exercise gets a fixed color matching its selector on the Today tab,
+    // rather than whatever slot it happens to land in.
+    if (colors[EXERCISE_NAME] !== undefined) {
+      colors[EXERCISE_NAME] = theme === 'dark' ? EXERCISE_COLOR_DARK : EXERCISE_COLOR_LIGHT
+    }
 
     const nameSet = new Set()
     filtered.forEach((e) => {
       ;(e.symptoms || []).forEach((s) => nameSet.add(s.name))
     })
+    const hasExerciseInRange = filtered.some((e) => e.exercise_level != null)
+    if (hasExerciseInRange) nameSet.add(EXERCISE_NAME)
     const names = Array.from(nameSet)
 
     const data = filtered.map((e) => {
       const row = { date: e.entry_date }
       names.forEach((name) => {
+        if (name === EXERCISE_NAME) {
+          row[name] = e.exercise_level != null ? EXERCISE_VALUE[e.exercise_level] : undefined
+          return
+        }
         const found = (e.symptoms || []).find((s) => s.name === name)
         row[name] = found ? SEVERITY_VALUE[found.severity] : 0
       })
@@ -169,9 +193,9 @@ export default function History() {
       <SleepChart entries={entries} rangeDays={rangeDays} />
 
       <section className="entry-card">
-        <h2 className="entry-card__title">Symptom severity over time</h2>
+        <h2 className="entry-card__title">Symptoms &amp; exercise over time</h2>
         {symptomNames.length === 0 ? (
-          <p className="empty-state__sub">No symptoms logged in this range.</p>
+          <p className="empty-state__sub">No symptoms or exercise logged in this range.</p>
         ) : (
           <>
             <div className="symptom-filter">
@@ -213,7 +237,11 @@ export default function History() {
                     <YAxis
                       domain={[0, 2]}
                       ticks={[0, 1, 2]}
-                      tickFormatter={(v) => SEVERITY_LABEL[v]}
+                      tickFormatter={(v) =>
+                        visibleSymptoms.length === 1 && visibleSymptoms[0] === EXERCISE_NAME
+                          ? EXERCISE_LABEL[v]
+                          : SEVERITY_LABEL[v]
+                      }
                       tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
                       axisLine={false}
                       tickLine={false}
@@ -242,9 +270,11 @@ export default function History() {
 
       <TrendSummary
         entries={entries}
-        symptomNames={allSymptomNames}
+        symptomNames={allSymptomNames.filter((n) => n !== EXERCISE_NAME)}
         colorByName={colorByName}
       />
+
+      <FoodHistory entries={entries} rangeDays={rangeDays} />
 
       <section className="entry-card">
         <h2 className="entry-card__title">Recent days</h2>
@@ -261,6 +291,12 @@ export default function History() {
                 {e.sleep_hours != null && (
                   <div className="history-row__line">
                     <span className="history-row__label">Sleep:</span> {e.sleep_hours}h
+                  </div>
+                )}
+                {e.exercise_level && e.exercise_level !== 'none' && (
+                  <div className="history-row__line">
+                    <span className="history-row__label">Exercise:</span>{' '}
+                    {EXERCISE_LABEL[EXERCISE_VALUE[e.exercise_level]]}
                   </div>
                 )}
                 {e.medications?.length > 0 && (
