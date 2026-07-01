@@ -16,7 +16,6 @@ const EMPTY_ENTRY = {
   sleep_hours: null,
   medications: [],
   symptoms: [],
-  notes: '',
 }
 
 function formatDateLabel(dateStr) {
@@ -62,7 +61,6 @@ export default function DailyEntry() {
           sleep_hours: existing.sleep_hours,
           medications: existing.medications || [],
           symptoms: existing.symptoms || [],
-          notes: existing.notes || '',
         })
       } else {
         setEntry(EMPTY_ENTRY)
@@ -128,7 +126,6 @@ export default function DailyEntry() {
         sleep_hours: entry.sleep_hours === '' ? null : entry.sleep_hours,
         medications: entry.medications,
         symptoms: entry.symptoms,
-        notes: entry.notes,
       })
 
       setSaveState('saved')
@@ -237,17 +234,6 @@ export default function DailyEntry() {
               symptoms={entry.symptoms}
               onChange={(symptoms) => setEntry((prev) => ({ ...prev, symptoms }))}
               onAddNew={handleSymptomAdd}
-            />
-          </section>
-
-          <section className="entry-card">
-            <h2 className="entry-card__title">Notes</h2>
-            <textarea
-              className="notes-textarea"
-              placeholder="Anything else worth remembering about today…"
-              value={entry.notes}
-              onChange={(e) => setEntry((prev) => ({ ...prev, notes: e.target.value }))}
-              rows={3}
             />
           </section>
 
