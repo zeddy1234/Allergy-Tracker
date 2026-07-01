@@ -1,5 +1,43 @@
 :root {
-  /* Color tokens */
+  /* Color tokens — dark theme is the default */
+  --color-bg: #1C1B18;
+  --color-bg-card: #26241F;
+  --color-ink: #F1EDE3;
+  --color-ink-soft: #A39C8C;
+  --color-sage: #8FB093;
+  --color-sage-deep: #7BAF82;
+  --color-sage-pale: #2A3B2C;
+  --color-amber: #E8B368;
+  --color-amber-pale: #3A2E17;
+  --color-coral: #E68868;
+  --color-coral-pale: #3A241D;
+  --color-line: #3C3A32;
+  --color-line-soft: #2A2822;
+
+  /* Text colors for severity tags — tuned per theme for contrast */
+  --tag-none-text: #9FD6A8;
+  --tag-mild-text: #F0C179;
+  --tag-severe-text: #F2A184;
+
+  /* Tooltip — intentionally independent of --color-ink/--color-bg so it
+     stays legible regardless of theme */
+  --color-tooltip-bg: #0F0E0C;
+  --color-tooltip-text: #FFFFFF;
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='light'] {
   --color-bg: #FBF8F3;
   --color-bg-card: #FFFFFF;
   --color-ink: #3D3B36;
@@ -14,16 +52,13 @@
   --color-line: #E8E2D6;
   --color-line-soft: #F1ECE2;
 
-  /* Type */
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --tag-none-text: #2E5C34;
+  --tag-mild-text: #8A5A0F;
+  --tag-severe-text: #9C3A22;
 
-  /* Radius */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
+  --color-tooltip-bg: #3D3B36;
+  --color-tooltip-text: #FFFFFF;
 
-  /* Shadow */
   --shadow-card: 0 1px 2px rgba(61, 59, 54, 0.04), 0 4px 16px rgba(61, 59, 54, 0.06);
 }
 
@@ -42,6 +77,15 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+html {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
 }
 
 #root {
