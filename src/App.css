@@ -359,24 +359,8 @@
   justify-content: center;
 }
 
-/* ===== Notes ===== */
-
-.notes-textarea {
-  width: 100%;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  font-size: 15px;
-  background: var(--color-bg);
-  color: var(--color-ink);
-  resize: vertical;
-}
-
-.notes-textarea::placeholder {
-  color: var(--color-ink-soft);
-}
-
 /* ===== Save button ===== */
+
 
 .save-button {
   width: 100%;
@@ -491,22 +475,22 @@
   flex-shrink: 0;
 }
 
-/* ===== Food history ===== */
+/* ===== Ranked list + daily log (shared by Food and Medication) ===== */
 
-.food-rank-list {
+.rank-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.food-rank-row {
+.rank-row {
   display: grid;
   grid-template-columns: 84px 1fr 52px;
   align-items: center;
   gap: 10px;
 }
 
-.food-rank-row__name {
+.rank-row__name {
   font-size: 13.5px;
   font-weight: 600;
   white-space: nowrap;
@@ -514,44 +498,44 @@
   text-overflow: ellipsis;
 }
 
-.food-rank-row__bar-track {
+.rank-row__bar-track {
   height: 8px;
   background: var(--color-line-soft);
   border-radius: 999px;
   overflow: hidden;
 }
 
-.food-rank-row__bar-fill {
+.rank-row__bar-fill {
   height: 100%;
   border-radius: 999px;
   transition: width 0.3s ease;
 }
 
-.food-rank-row__count {
+.rank-row__count {
   font-size: 11.5px;
   color: var(--color-ink-soft);
   text-align: right;
   white-space: nowrap;
 }
 
-.food-log-list {
+.daily-log-list {
   display: flex;
   flex-direction: column;
 }
 
-.food-log-row {
+.daily-log-row {
   display: flex;
   gap: 14px;
   padding: 11px 0;
   border-top: 1px solid var(--color-line-soft);
 }
 
-.food-log-row:first-child {
+.daily-log-row:first-child {
   border-top: none;
   padding-top: 0;
 }
 
-.food-log-row__date {
+.daily-log-row__date {
   flex-shrink: 0;
   width: 56px;
   font-size: 13px;
@@ -559,10 +543,47 @@
   color: var(--color-ink-soft);
 }
 
-.food-log-row__items {
+.daily-log-row__items {
   flex: 1;
   font-size: 13.5px;
   line-height: 1.45;
+}
+
+/* ===== Collapsible card ===== */
+
+.collapsible-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-ink);
+  text-align: left;
+}
+
+.collapsible-header__title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.collapsible-header__count {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  background: var(--color-line-soft);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.collapsible-body {
+  margin-top: 14px;
 }
 
 .period-toggle {
