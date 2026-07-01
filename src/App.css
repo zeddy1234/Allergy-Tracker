@@ -15,6 +15,10 @@
   top: 0;
   background: var(--color-bg);
   z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s ease;
 }
 
 .app-header__title {
@@ -24,6 +28,24 @@
   margin: 0;
   letter-spacing: -0.01em;
   color: var(--color-ink);
+}
+
+.theme-toggle {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-line);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink);
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
 }
 
 .app-main {
@@ -41,7 +63,7 @@
   width: 100%;
   max-width: 560px;
   display: flex;
-  background: rgba(251, 248, 243, 0.92);
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--color-line);
   padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
@@ -601,12 +623,12 @@
 }
 
 .chart-tooltip {
-  background: var(--color-ink);
-  color: #fff;
+  background: var(--color-tooltip-bg);
+  color: var(--color-tooltip-text);
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 12.5px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
 }
 
 .chart-tooltip__date {
@@ -701,17 +723,17 @@
 
 .severity-tag--none {
   background: var(--color-sage-pale);
-  color: #2E5C34;
+  color: var(--tag-none-text);
 }
 
 .severity-tag--mild {
   background: var(--color-amber-pale);
-  color: #8A5A0F;
+  color: var(--tag-mild-text);
 }
 
 .severity-tag--severe {
   background: var(--color-coral-pale);
-  color: #9C3A22;
+  color: var(--tag-severe-text);
 }
 
 /* ===== Empty state ===== */
