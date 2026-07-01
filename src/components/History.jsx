@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import { fetchAllEntries } from '../lib/data'
 import TrendSummary from './TrendSummary'
+import SleepChart from './SleepChart'
 import { useTheme } from '../lib/theme'
 
 const SEVERITY_VALUE = { none: 0, mild: 1, severe: 2 }
@@ -164,6 +165,8 @@ export default function History() {
           </button>
         ))}
       </div>
+
+      <SleepChart entries={entries} rangeDays={rangeDays} />
 
       <section className="entry-card">
         <h2 className="entry-card__title">Symptom severity over time</h2>
