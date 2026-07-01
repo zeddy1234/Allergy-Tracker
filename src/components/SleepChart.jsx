@@ -71,7 +71,7 @@ export default function SleepChart({ entries, rangeDays }) {
       ) : (
         <div className="chart-wrap">
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+            <AreaChart data={data} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
               <defs>
                 <linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={color} stopOpacity={0.35} />
@@ -88,12 +88,12 @@ export default function SleepChart({ entries, rangeDays }) {
               />
               <YAxis
                 domain={[0, 12]}
-                ticks={[0, 4, 8, 12]}
+                ticks={[0, 3, 6, 9, 12]}
                 tickFormatter={(v) => `${v}h`}
                 tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
                 axisLine={false}
                 tickLine={false}
-                width={32}
+                width={30}
               />
               <Tooltip content={<SleepTooltip color={color} />} />
               <Area
