@@ -481,6 +481,16 @@
   margin-bottom: 0;
 }
 
+.sleep-average {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  background: var(--color-line-soft);
+  padding: 5px 12px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
 .period-toggle {
   display: flex;
   gap: 4px;
