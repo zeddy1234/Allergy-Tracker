@@ -30,16 +30,16 @@ function directionFor(delta) {
 }
 
 const DIRECTION_META_LIGHT = {
-  worsening: { label: 'Worsening', color: '#B8410E' },
+  worsening: { label: 'Worsening', color: '#C0392B' },
   improving: { label: 'Improving', color: '#1D6B4A' },
-  stable: { label: 'Stable', color: '#7A766C' },
+  stable: { label: 'Stable', color: '#8A6D00' },
   unknown: { label: 'Not enough data', color: '#B4AE9F' },
 }
 
 const DIRECTION_META_DARK = {
-  worsening: { label: 'Worsening', color: '#FF9466' },
+  worsening: { label: 'Worsening', color: '#FF6B5B' },
   improving: { label: 'Improving', color: '#5FD69A' },
-  stable: { label: 'Stable', color: '#A39C8C' },
+  stable: { label: 'Stable', color: '#F0D061' },
   unknown: { label: 'Not enough data', color: '#6B6559' },
 }
 
