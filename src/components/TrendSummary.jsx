@@ -22,10 +22,10 @@ function averageSeverity(entries, symptomName, startStr, endStr) {
   return sum / count
 }
 
-function directionFor(delta) {
-  if (delta === null) return 'unknown'
-  if (delta > 0.15) return 'worsening'
-  if (delta < -0.15) return 'improving'
+function directionFor(pct) {
+  if (pct === null) return 'unknown'
+  if (pct > 5) return 'worsening'
+  if (pct < -5) return 'improving'
   return 'stable'
 }
 
@@ -93,11 +93,11 @@ export default function TrendSummary({ entries, symptomNames, colorByName }) {
       const current = averageSeverity(entries, name, currentStart, currentEnd)
       const previous = averageSeverity(entries, name, previousStart, previousEnd)
       const delta = current !== null && previous !== null ? current - previous : null
-      const direction = directionFor(delta)
       // Expressed as a share of the full None→Severe scale (0 to 2), so it's
       // always well-defined — including when the previous period was all
       // "None" (0), where a normal percent-change would divide by zero.
       const changePct = delta !== null ? Math.round((delta / 2) * 100) : null
+      const direction = directionFor(changePct)
       return { name, current, previous, direction, changePct }
     })
   }, [entries, symptomNames, period])
