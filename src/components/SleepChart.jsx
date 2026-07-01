@@ -28,7 +28,7 @@ function SleepTooltip({ active, payload, label, color }) {
         <span className="chart-tooltip__dot" style={{ background: color }} />
         <span className="chart-tooltip__name">Sleep</span>
         <span className="chart-tooltip__value">
-          {val == null ? '—' : `${val}h`}
+          {val == null ? '—' : `${Math.round(val * 10) / 10}h`}
         </span>
       </div>
     </div>
@@ -71,7 +71,7 @@ export default function SleepChart({ entries, rangeDays }) {
       ) : (
         <div className="chart-wrap">
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={data} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
+            <AreaChart data={data} margin={{ top: 8, right: 8, left: -4, bottom: 0 }}>
               <defs>
                 <linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={color} stopOpacity={0.35} />
@@ -93,7 +93,7 @@ export default function SleepChart({ entries, rangeDays }) {
                 tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
                 axisLine={false}
                 tickLine={false}
-                width={30}
+                width={34}
               />
               <Tooltip content={<SleepTooltip color={color} />} />
               <Area
