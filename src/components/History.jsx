@@ -201,7 +201,7 @@ export default function History() {
             ) : (
               <div className="chart-wrap">
                 <ResponsiveContainer width="100%" height={260}>
-                  <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                  <LineChart data={chartData} margin={{ top: 8, right: 8, left: -4, bottom: 0 }}>
                     <CartesianGrid stroke="var(--color-line-soft)" vertical={false} />
                     <XAxis
                       dataKey="date"
