@@ -9,11 +9,19 @@ import {
   Tooltip,
 } from 'recharts'
 import { fetchAllEntries } from '../lib/data'
+import TrendSummary from './TrendSummary'
 
 const SEVERITY_VALUE = { none: 0, mild: 1, severe: 2 }
 const SEVERITY_LABEL = { 0: 'None', 1: 'Mild', 2: 'Severe' }
+// Deliberately dark, saturated, and visually distinct from one another —
+// no two adjacent hues that could be confused at a glance.
 const LINE_COLORS = [
-  '#7A9B7E', '#E3A857', '#E0735A', '#6B8FA8', '#A87CA0', '#B98D5E',
+  '#1D6B4A', // deep green
+  '#B8410E', // burnt rust
+  '#1A5C8A', // deep blue
+  '#8A2F5C', // plum
+  '#8A6D00', // dark gold
+  '#4A4A4A', // charcoal
 ]
 
 function shortDate(dateStr) {
@@ -41,6 +49,7 @@ export default function History() {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [rangeDays, setRangeDays] = useState(14)
+  const [selectedSymptoms, setSelectedSymptoms] = useState(null) // null = not yet initialized
 
   useEffect(() => {
     fetchAllEntries()
@@ -49,12 +58,24 @@ export default function History() {
       .finally(() => setLoading(false))
   }, [])
 
-  const { chartData, symptomNames } = useMemo(() => {
+  const { chartData, symptomNames, colorByName, allSymptomNames } = useMemo(() => {
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - rangeDays)
     const cutoffStr = cutoff.toISOString().slice(0, 10)
 
     const filtered = entries.filter((e) => e.entry_date >= cutoffStr)
+
+    // Collect symptom names across ALL entries (not just this range) so the
+    // selector stays stable and colors don't shift as the range changes.
+    const allNameSet = new Set()
+    entries.forEach((e) => {
+      ;(e.symptoms || []).forEach((s) => allNameSet.add(s.name))
+    })
+    const allNames = Array.from(allNameSet)
+    const colors = {}
+    allNames.forEach((name, i) => {
+      colors[name] = LINE_COLORS[i % LINE_COLORS.length]
+    })
 
     const nameSet = new Set()
     filtered.forEach((e) => {
@@ -71,8 +92,29 @@ export default function History() {
       return row
     })
 
-    return { chartData: data, symptomNames: names }
+    return { chartData: data, symptomNames: names, colorByName: colors, allSymptomNames: allNames }
   }, [entries, rangeDays])
+
+  // Default to showing just the first symptom, once we know what exists.
+  useEffect(() => {
+    if (selectedSymptoms === null && symptomNames.length > 0) {
+      setSelectedSymptoms([symptomNames[0]])
+    }
+  }, [symptomNames, selectedSymptoms])
+
+  function toggleSymptomFilter(name) {
+    setSelectedSymptoms((prev) => {
+      const current = prev || []
+      if (current.includes(name)) {
+        return current.filter((n) => n !== name)
+      }
+      return [...current, name]
+    })
+  }
+
+  const visibleSymptoms = symptomNames.filter((n) =>
+    (selectedSymptoms || []).includes(n)
+  )
 
   const recentEntries = useMemo(
     () => [...entries].reverse().slice(0, 10),
@@ -115,56 +157,77 @@ export default function History() {
           <p className="empty-state__sub">No symptoms logged in this range.</p>
         ) : (
           <>
-            <div className="chart-wrap">
-              <ResponsiveContainer width="100%" height={260}>
-                <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                  <CartesianGrid stroke="var(--color-line-soft)" vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={shortDate}
-                    tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
-                    axisLine={{ stroke: 'var(--color-line)' }}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    domain={[0, 2]}
-                    ticks={[0, 1, 2]}
-                    tickFormatter={(v) => SEVERITY_LABEL[v]}
-                    tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
-                    axisLine={false}
-                    tickLine={false}
-                    width={56}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  {symptomNames.map((name, i) => (
-                    <Line
-                      key={name}
-                      type="monotone"
-                      dataKey={name}
-                      stroke={LINE_COLORS[i % LINE_COLORS.length]}
-                      strokeWidth={2.5}
-                      dot={{ r: 3 }}
-                      activeDot={{ r: 5 }}
-                      connectNulls
+            <div className="symptom-filter">
+              {symptomNames.map((name) => {
+                const isOn = (selectedSymptoms || []).includes(name)
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    className={`symptom-filter__chip ${isOn ? 'symptom-filter__chip--on' : ''}`}
+                    style={isOn ? { '--chip-color': colorByName[name] } : undefined}
+                    onClick={() => toggleSymptomFilter(name)}
+                    aria-pressed={isOn}
+                  >
+                    <span
+                      className="symptom-filter__dot"
+                      style={{ background: colorByName[name] }}
                     />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
+                    {name}
+                  </button>
+                )
+              })}
             </div>
-            <div className="chart-legend">
-              {symptomNames.map((name, i) => (
-                <span key={name} className="chart-legend__item">
-                  <span
-                    className="chart-legend__dot"
-                    style={{ background: LINE_COLORS[i % LINE_COLORS.length] }}
-                  />
-                  {name}
-                </span>
-              ))}
-            </div>
+
+            {visibleSymptoms.length === 0 ? (
+              <p className="empty-state__sub">Select a symptom above to see its graph.</p>
+            ) : (
+              <div className="chart-wrap">
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                    <CartesianGrid stroke="var(--color-line-soft)" vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={shortDate}
+                      tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
+                      axisLine={{ stroke: 'var(--color-line)' }}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      domain={[0, 2]}
+                      ticks={[0, 1, 2]}
+                      tickFormatter={(v) => SEVERITY_LABEL[v]}
+                      tick={{ fontSize: 11, fill: 'var(--color-ink-soft)' }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={56}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    {visibleSymptoms.map((name) => (
+                      <Line
+                        key={name}
+                        type="monotone"
+                        dataKey={name}
+                        stroke={colorByName[name]}
+                        strokeWidth={2.5}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                        connectNulls
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </>
         )}
       </section>
+
+      <TrendSummary
+        entries={entries}
+        symptomNames={allSymptomNames}
+        colorByName={colorByName}
+      />
 
       <section className="entry-card">
         <h2 className="entry-card__title">Recent days</h2>
