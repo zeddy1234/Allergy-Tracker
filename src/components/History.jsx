@@ -25,6 +25,8 @@ const EXERCISE_LABEL = { 0: 'None', 1: 'Light', 2: 'Intense' }
 const EXERCISE_COLOR_LIGHT = '#6B5CA5'
 const EXERCISE_COLOR_DARK = '#9C8CF0'
 
+const SEVERITY_DISPLAY = { none: 'None', mild: 'Mild', severe: 'Severe' }
+
 // Two palettes, tuned for contrast against their respective backgrounds.
 // Same order/meaning across both so a given symptom's "slot" color feels
 // consistent in spirit even when the theme changes.
@@ -311,7 +313,7 @@ export default function History() {
                   <div className="history-row__symptoms">
                     {e.symptoms.map((s) => (
                       <span key={s.name} className={`severity-tag severity-tag--${s.severity}`}>
-                        {s.name}
+                        {s.name} &middot; {SEVERITY_DISPLAY[s.severity]}
                       </span>
                     ))}
                   </div>
