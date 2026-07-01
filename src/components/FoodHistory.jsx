@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useTheme } from '../lib/theme'
+import CollapsibleCard from './CollapsibleCard'
 
 const FOOD_BAR_LIGHT = '#B8791E'
 const FOOD_BAR_DARK = '#F0C179'
@@ -83,20 +84,20 @@ export default function FoodHistory({ entries, rangeDays }) {
             No food logged in the last {period === 'week' ? '7 days' : '30 days'}.
           </p>
         ) : (
-          <div className="food-rank-list">
+          <div className="rank-list">
             {rankedFoods.map((food) => (
-              <div key={food.name} className="food-rank-row">
-                <span className="food-rank-row__name">{food.name}</span>
-                <div className="food-rank-row__bar-track">
+              <div key={food.name} className="rank-row">
+                <span className="rank-row__name">{food.name}</span>
+                <div className="rank-row__bar-track">
                   <div
-                    className="food-rank-row__bar-fill"
+                    className="rank-row__bar-fill"
                     style={{
                       width: `${(food.count / maxCount) * 100}%`,
                       background: barColor,
                     }}
                   />
                 </div>
-                <span className="food-rank-row__count">
+                <span className="rank-row__count">
                   {food.count}{' '}
                   {food.count === 1 ? 'day' : 'days'}
                 </span>
@@ -106,21 +107,20 @@ export default function FoodHistory({ entries, rangeDays }) {
         )}
       </section>
 
-      <section className="entry-card">
-        <h2 className="entry-card__title">Food log</h2>
+      <CollapsibleCard title="Food log" count={foodLog.length}>
         {foodLog.length === 0 ? (
           <p className="empty-state__sub">No food logged in this range.</p>
         ) : (
-          <div className="food-log-list">
+          <div className="daily-log-list">
             {foodLog.map((e) => (
-              <div key={e.entry_date} className="food-log-row">
-                <span className="food-log-row__date">{shortDate(e.entry_date)}</span>
-                <span className="food-log-row__items">{e.foods.join(', ')}</span>
+              <div key={e.entry_date} className="daily-log-row">
+                <span className="daily-log-row__date">{shortDate(e.entry_date)}</span>
+                <span className="daily-log-row__items">{e.foods.join(', ')}</span>
               </div>
             ))}
           </div>
         )}
-      </section>
+      </CollapsibleCard>
     </>
   )
 }
