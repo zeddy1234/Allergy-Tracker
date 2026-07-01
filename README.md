@@ -28,7 +28,7 @@ Built for a family member managing multiple allergies who needed a way to spot
 patterns between food, sleep, medication, and symptom flare-ups over time —
 without paying for a generic app that didn't fit her exact needs.
 
-## Running locally
+## Running locally .
 
 ```bash
 npm install
