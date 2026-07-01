@@ -94,7 +94,11 @@ export default function TrendSummary({ entries, symptomNames, colorByName }) {
       const previous = averageSeverity(entries, name, previousStart, previousEnd)
       const delta = current !== null && previous !== null ? current - previous : null
       const direction = directionFor(delta)
-      return { name, current, previous, direction }
+      // Expressed as a share of the full None→Severe scale (0 to 2), so it's
+      // always well-defined — including when the previous period was all
+      // "None" (0), where a normal percent-change would divide by zero.
+      const changePct = delta !== null ? Math.round((delta / 2) * 100) : null
+      return { name, current, previous, direction, changePct }
     })
   }, [entries, symptomNames, period])
 
@@ -124,6 +128,7 @@ export default function TrendSummary({ entries, symptomNames, colorByName }) {
 
       <p className="trend-subtitle">
         Comparing this {period === 'week' ? 'week' : 'month'} to the previous one
+        &nbsp;&middot;&nbsp; % = change in average severity (None&ndash;Severe scale)
       </p>
 
       <div className="trend-list">
@@ -143,6 +148,12 @@ export default function TrendSummary({ entries, symptomNames, colorByName }) {
                 <span className="trend-row__badge" style={{ color: meta.color }}>
                   <Arrow direction={row.direction} />
                   {meta.label}
+                  {row.changePct !== null && row.direction !== 'unknown' && (
+                    <span className="trend-row__pct">
+                      {row.changePct > 0 ? '+' : ''}
+                      {row.changePct}%
+                    </span>
+                  )}
                 </span>
               </div>
 
