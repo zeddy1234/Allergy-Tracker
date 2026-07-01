@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTheme } from '../lib/theme'
 
 const SEVERITY_VALUE = { none: 0, mild: 1, severe: 2 }
 
@@ -28,11 +29,18 @@ function directionFor(delta) {
   return 'stable'
 }
 
-const DIRECTION_META = {
+const DIRECTION_META_LIGHT = {
   worsening: { label: 'Worsening', color: '#B8410E' },
   improving: { label: 'Improving', color: '#1D6B4A' },
   stable: { label: 'Stable', color: '#7A766C' },
   unknown: { label: 'Not enough data', color: '#B4AE9F' },
+}
+
+const DIRECTION_META_DARK = {
+  worsening: { label: 'Worsening', color: '#FF9466' },
+  improving: { label: 'Improving', color: '#5FD69A' },
+  stable: { label: 'Stable', color: '#A39C8C' },
+  unknown: { label: 'Not enough data', color: '#6B6559' },
 }
 
 function Arrow({ direction }) {
@@ -61,6 +69,8 @@ function Arrow({ direction }) {
 }
 
 export default function TrendSummary({ entries, symptomNames, colorByName }) {
+  const theme = useTheme()
+  const DIRECTION_META = theme === 'dark' ? DIRECTION_META_DARK : DIRECTION_META_LIGHT
   const [period, setPeriod] = useState('week') // 'week' | 'month'
 
   const rows = useMemo(() => {
