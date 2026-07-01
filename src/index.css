@@ -1,0 +1,80 @@
+:root {
+  /* Color tokens */
+  --color-bg: #FBF8F3;
+  --color-bg-card: #FFFFFF;
+  --color-ink: #3D3B36;
+  --color-ink-soft: #7A766C;
+  --color-sage: #7A9B7E;
+  --color-sage-deep: #5C7F61;
+  --color-sage-pale: #E4EBE2;
+  --color-amber: #E3A857;
+  --color-amber-pale: #FBF0DC;
+  --color-coral: #E0735A;
+  --color-coral-pale: #FBE5DE;
+  --color-line: #E8E2D6;
+  --color-line-soft: #F1ECE2;
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 2px rgba(61, 59, 54, 0.04), 0 4px 16px rgba(61, 59, 54, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--color-sage-pale);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Visible focus state for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-sage-deep);
+  outline-offset: 2px;
+}

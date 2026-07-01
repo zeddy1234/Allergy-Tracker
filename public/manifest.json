@@ -1,0 +1,9 @@
+{
+  "name": "Daily Log",
+  "short_name": "Daily Log",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBF8F3",
+  "theme_color": "#FBF8F3",
+  "icons": []
+}
