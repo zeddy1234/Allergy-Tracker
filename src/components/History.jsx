@@ -10,18 +10,30 @@ import {
 } from 'recharts'
 import { fetchAllEntries } from '../lib/data'
 import TrendSummary from './TrendSummary'
+import { useTheme } from '../lib/theme'
 
 const SEVERITY_VALUE = { none: 0, mild: 1, severe: 2 }
 const SEVERITY_LABEL = { 0: 'None', 1: 'Mild', 2: 'Severe' }
-// Deliberately dark, saturated, and visually distinct from one another —
-// no two adjacent hues that could be confused at a glance.
-const LINE_COLORS = [
+
+// Two palettes, tuned for contrast against their respective backgrounds.
+// Same order/meaning across both so a given symptom's "slot" color feels
+// consistent in spirit even when the theme changes.
+const LINE_COLORS_LIGHT = [
   '#1D6B4A', // deep green
   '#B8410E', // burnt rust
   '#1A5C8A', // deep blue
   '#8A2F5C', // plum
   '#8A6D00', // dark gold
   '#4A4A4A', // charcoal
+]
+
+const LINE_COLORS_DARK = [
+  '#5FD69A', // bright green
+  '#FF9466', // bright rust
+  '#6DBBF0', // bright blue
+  '#EF8CC4', // bright plum/pink
+  '#F0D061', // bright gold
+  '#C9C2B4', // warm light gray (stands in for charcoal, which vanishes on dark bg)
 ]
 
 function shortDate(dateStr) {
@@ -46,6 +58,8 @@ function CustomTooltip({ active, payload, label }) {
 }
 
 export default function History() {
+  const theme = useTheme()
+  const LINE_COLORS = theme === 'dark' ? LINE_COLORS_DARK : LINE_COLORS_LIGHT
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [rangeDays, setRangeDays] = useState(14)
@@ -93,7 +107,7 @@ export default function History() {
     })
 
     return { chartData: data, symptomNames: names, colorByName: colors, allSymptomNames: allNames }
-  }, [entries, rangeDays])
+  }, [entries, rangeDays, theme])
 
   // Default to showing just the first symptom, once we know what exists.
   useEffect(() => {
