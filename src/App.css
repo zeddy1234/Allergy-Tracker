@@ -559,6 +559,10 @@
   font-weight: 700;
 }
 
+.trend-row__pct {
+  font-variant-numeric: tabular-nums;
+}
+
 .trend-bars {
   display: flex;
   flex-direction: column;
